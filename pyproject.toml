@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=40.8.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "region_finder_ru"
+version = "0.0.1"
+description = "Russian regions finder"
+readme = "README.md"
+requires-python = ">=3.6"
+keywords = ["regions", ]
+authors = [
+    { email = "vgolosyandriya@yandex.ru" },
+    { name = "Pavel Prudyvus" }
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+homepage = "https://github.com/PrudyvusP/region_finder_ru"
+issues = "https://github.com/PrudyvusP/region_finder_ru/issues"
+
+[project.optional-dependencies]
+test = ["pytest >= 5.0.0",
+    "pytest-cov[all]"]
