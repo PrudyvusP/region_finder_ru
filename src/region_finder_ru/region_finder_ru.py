@@ -152,7 +152,7 @@ class RegionFinder(ABC):
         return self._settlement_regex.findall(self.address)
 
     @abstractmethod
-    def define_regions(self):
+    def define_regions(self, **kwargs):
         """Метод должен быть перезаписан с учетом
         выбранной стратегии хранения и обработки справочной информации.
         Информацию о почтовых индексах и регионах РФ можно хранить
