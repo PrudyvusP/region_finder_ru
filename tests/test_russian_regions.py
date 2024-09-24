@@ -40,6 +40,18 @@ class TestRegion:
 
         assert not RegionFinderForTests(address)._find_postcodes()
 
+    def test_find_postcodes_first_3_symb(self):
+        """Последовательность из шести цифр
+         - почтовый индекс и возврат списка первых трех символов каждого."""
+
+        address = ('125212 Ленинградское шоссе, д. 155 634009,'
+                   ' пр-кт Ленина, Томск, Томская область,')
+
+        assert (RegionFinderForTests(address)
+                ._find_first_3_postcodes() == ['125',
+                                               '634']
+                )
+
     def test_find_region_names_federal_cities(self):
         """Названия федеральных городов определяются корректно."""
 
