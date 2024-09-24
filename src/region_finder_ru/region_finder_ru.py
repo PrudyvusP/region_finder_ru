@@ -16,6 +16,8 @@ class RegionFinder(ABC):
     -------
     _find_postcodes():
         Ищет почтовые индексы РФ и возвращает их список.
+    _find_first_3_postcodes():
+        Ищет почтовые индексы РФ и возвращает их список (первые 3 симв. из 6).
     _find_region_names():
         Ищет упоминания регионов РФ и возвращает их список.
     _find_city_names():
@@ -30,6 +32,7 @@ class RegionFinder(ABC):
     """
 
     _postcode_regex = re.compile(r'((?<![.:\d])\d{6}(?![:\d]))')
+    _postcode_first_3_regex = re.compile(r'(?<![.:\d])(\d{3})\d{3}(?![:\d])')
 
     # https://regex101.com/r/jO3iI9/1
     _region_name_regex = re.compile(
@@ -125,6 +128,12 @@ class RegionFinder(ABC):
          - последовательности из 6 цифр."""
 
         return self._postcode_regex.findall(self.address)
+
+    def _find_first_3_postcodes(self) -> List[str]:
+        """Возвращает список захваченных первых трех символов почтовых индексов
+         - последовательности из 6 цифр."""
+
+        return self._postcode_first_3_regex.findall(self.address)
 
     def _find_region_names(self) -> List[str]:
         """Возвращает список названий регионов."""
