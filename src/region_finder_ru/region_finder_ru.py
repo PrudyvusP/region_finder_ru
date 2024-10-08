@@ -14,6 +14,8 @@ class RegionFinder(ABC):
 
     Методы
     -------
+    _are_street_attrs_in_address():
+        Возвращает True, если в строке есть элементы улично-дорожной сети.
     _find_postcodes():
         Ищет почтовые индексы РФ и возвращает их список.
     _find_first_3_postcodes():
@@ -26,6 +28,8 @@ class RegionFinder(ABC):
         Ищет упоминания районов РФ и возвращает их список.
     _find_settlement_names():
         Ищет упоминания посёлков и сёл РФ и возвращает их список.
+    is_address():
+        Возвращает True, если в строке есть адрес.
     define_regions():
         абстрактный метод, реализующий логику работу по поиску
         совпадений в справочниках.
@@ -184,6 +188,16 @@ class RegionFinder(ABC):
          городского типа, поселков и сел."""
 
         return self._settlement_regex.findall(self.address)
+
+    def is_address(self) -> bool:
+        """Возвращает True, если в строке есть адрес, иначе False."""
+
+        return (self._are_street_attrs_in_address() or
+                len(self._find_region_names()) > 0 or
+                len(self._find_first_3_postcodes()) > 0 or
+                len(self._find_city_names()) > 0 or
+                len(self._find_district_names()) > 0 or
+                len(self._find_settlement_names()) > 0)
 
     @abstractmethod
     def define_regions(self, **kwargs):
