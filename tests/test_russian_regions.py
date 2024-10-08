@@ -1,3 +1,4 @@
+import pytest
 from region_finder_ru import RegionFinder
 
 
@@ -10,6 +11,22 @@ class RegionFinderForTests(RegionFinder):
 
 
 class TestRegion:
+
+    @pytest.mark.xfail(raises=ValueError)
+    def test_empty_address(self):
+        """Проверяет, что нельзя создать экземпляр класса без адреса."""
+
+        _ = RegionFinderForTests('')
+
+    def test_init_pre_work(self):
+        """Проверяет, что при создании инстанса класса из адреса уходят
+        лишние пробелы, а также адрес переходит в нижний регистр."""
+
+        address = '125212 Ленинградское          шоссе'
+        x = RegionFinderForTests(address)
+
+        assert x.address == '125212 ленинградское шоссе'
+
     def test_find_postcodes(self):
         """Последовательность из шести цифр
          - почтовый индекс."""
@@ -260,3 +277,87 @@ class TestRegion:
                    'селовой агрегат')
 
         assert not RegionFinderForTests(address)._find_settlement_names()
+
+    def test_find_street_attr_in_address(self):
+        """Проверка корректности найденных элементов улично-дорожной
+        сети в строке."""
+
+        addresses = [
+            'Ясная аллея 54',
+            '2-ая линия В.О.',
+            'Набережная реки Фонтанки 15',
+            'Ходынский бульвар, г. Москва',
+            'переулок Игнатовский 14',
+            'площадь Трафальгарская 11',
+            'Андропова проспект 21',
+            'Строителей проезд Космонавтов 14',
+            'Ленинградский проспект 17 метро "Сокол"',
+            'балтийский тупик 154',
+            'Улица 8 Марта, г. Москва',
+            'Выборгское шоссе д. 421, корп. 1',
+            'ал. Чемпионов, г. Новосибирск',
+            '17-ая лн. Васильевского острова',
+            'наб. реб. Чувашки 14',
+            'пер. Брянский 17',
+            'г. Москва, ш. Энтузиастов 111',
+            'Волочаевская ул., д. 17',
+            'г. Москва, пл. Революции',
+            'Международный туп. в отношениях 11',
+            'Ходынский б-р, г. Москва',
+            'пр-кт Королева 234',
+            'пр-зд Авиаконструкторов 999'
+        ]
+
+        for address in addresses:
+            assert RegionFinderForTests(
+                address)._are_street_attrs_in_address()
+
+    def test_non_find_street_attr_in_address(self):
+        """Проверка корректности ненайденных элементов улично-дорожной
+        сети в строке."""
+
+        addresses = [
+            'Трикотажная 49/1',
+            'барнаул. 481',
+            'ш Энтузиастов',
+            'пр кт Волгоградский',
+            'пернатый фазан',
+            'затуп. 777',
+            '1 л. Васильевского острова',
+            'галлея 17',
+        ]
+
+        for address in addresses:
+            assert not RegionFinderForTests(
+                address)._are_street_attrs_in_address()
+
+    def test_if_is_address(self):
+        """Проверка есть ли в строке адрес."""
+
+        addresses = [
+            'ул. Трикотажная 49/1',
+            'Московская область, парк чудес',
+            '125212 Ленинградка 37',
+            'г. Тюмень, Энтузиастов 132',
+            'Марпоссадский район Чувашии Ленина 18',
+            'п. Вурнары Чувашия Победы 17'
+        ]
+
+        for address in addresses:
+            assert RegionFinderForTests(address).is_address()
+
+    def test_if_is_not_address(self):
+        """Проверка есть ли в строке адрес."""
+
+        addresses = [
+            'Трикотажная 49/1',
+            'Московская, парк чудес',
+            '12521 Ленинградка 37',
+            'Тюмень, Энтузиастов 132',
+            'Марпоссадский рн Чувашии Ленина 18',
+            'Вурнары Чувашия Победы 17',
+            ' '
+        ]
+
+        for address in addresses:
+            assert not RegionFinderForTests(address).is_address()

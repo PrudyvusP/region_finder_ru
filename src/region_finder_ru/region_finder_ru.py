@@ -14,6 +14,8 @@ class RegionFinder(ABC):
 
     Методы
     -------
+    _are_street_attrs_in_address():
+        Возвращает True, если в строке есть элементы улично-дорожной сети.
     _find_postcodes():
         Ищет почтовые индексы РФ и возвращает их список.
     _find_first_3_postcodes():
@@ -26,6 +28,8 @@ class RegionFinder(ABC):
         Ищет упоминания районов РФ и возвращает их список.
     _find_settlement_names():
         Ищет упоминания посёлков и сёл РФ и возвращает их список.
+    is_address():
+        Возвращает True, если в строке есть адрес.
     define_regions():
         абстрактный метод, реализующий логику работу по поиску
         совпадений в справочниках.
@@ -106,6 +110,26 @@ class RegionFinder(ABC):
         r'(\b[а-яё]+-?[а-яё]+)'
     )
 
+    # https://regex101.com/r/IjDK3y/1
+    _street_regex = re.compile(
+        r'\b(?:'
+        r'аллея'
+        r'|линия'
+        r'|набережная'
+        r'|бульвар'
+        r'|переулок'
+        r'|площадь'
+        r'|про(?:спект|езд)'
+        r'|тупик'
+        r'|улица'
+        r'|шоссе'
+        r'|(?:ал|лн|наб|пер|ш|ул|пл|туп)(?=\.)'
+        r'|б-р'
+        r'|пр-кт'
+        r'|пр-зд)'
+        r'\b'
+    )
+
     _region_name_sub_regex = re.compile(r'\b(\w+)ой\b (\bобласт)[ьи]\b')
     _edge_name_sub_regex = re.compile(r'\b(\w+)ого\b (\bкра)[йя]\b')
 
@@ -122,6 +146,11 @@ class RegionFinder(ABC):
 
         address = re.sub(r' {2,}', ' ', address.lower())
         return re.sub(u'\xa0', ' ', address)
+
+    def _are_street_attrs_in_address(self) -> bool:
+        """Вычисляет есть ли элементы улично-дорожной сети в строке."""
+
+        return self._street_regex.search(self.address) is not None
 
     def _find_postcodes(self) -> List[str]:
         """Возвращает список почтовых индексов
@@ -159,6 +188,16 @@ class RegionFinder(ABC):
          городского типа, поселков и сел."""
 
         return self._settlement_regex.findall(self.address)
+
+    def is_address(self) -> bool:
+        """Возвращает True, если в строке есть адрес, иначе False."""
+
+        return (self._are_street_attrs_in_address() or
+                len(self._find_region_names()) > 0 or
+                len(self._find_first_3_postcodes()) > 0 or
+                len(self._find_city_names()) > 0 or
+                len(self._find_district_names()) > 0 or
+                len(self._find_settlement_names()) > 0)
 
     @abstractmethod
     def define_regions(self, **kwargs):
