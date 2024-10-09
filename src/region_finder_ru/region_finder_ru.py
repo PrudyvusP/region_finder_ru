@@ -134,7 +134,6 @@ class RegionFinder(ABC):
     _region_name_sub_regex = re.compile(r'\b(\w+)ой\b (\bобласт)[ьи]\b')
     _edge_name_sub_regex = re.compile(r'\b(\w+)(?:ого|ий)\b (\bкра)[йя]\b')
 
-
     def __init__(self, address: str) -> None:
         """Конструктор класса."""
 
