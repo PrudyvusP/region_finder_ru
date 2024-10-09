@@ -159,6 +159,17 @@ class TestRegion:
                                           'ставропольский']
                 )
 
+    def test_find_region_names_side_accusative(self):
+        """Названия краев в винительном падеже корректно."""
+
+        address = ('Приморский край, с. Михайловка,'
+                   'Приморского края с. Михайловка,')
+
+        assert (RegionFinderForTests(address)
+                ._find_region_names() == ['приморский',
+                                          'приморский']
+                )
+
     def test_find_region_names_hard_cases(self):
         """Другие случаи-исключения
          обрабатываются ожидаемым поведением."""
