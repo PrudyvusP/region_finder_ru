@@ -73,6 +73,7 @@ class RegionFinder(ABC):
         r'|велики[ей]'
         r'|белая'
         r'|советская'
+        r'|сухой'
         r'|сергиев'
         r'|полярные'
         r'|петров'
@@ -145,6 +146,7 @@ class RegionFinder(ABC):
         """Удаляет лишние символы из адресной строки."""
 
         address = re.sub(r' {2,}', ' ', address.lower())
+        address = re.sub('ё', 'е', address)
         return re.sub(u'\xa0', ' ', address)
 
     def _are_street_attrs_in_address(self) -> bool:
