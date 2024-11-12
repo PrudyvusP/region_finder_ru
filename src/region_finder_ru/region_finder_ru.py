@@ -35,8 +35,11 @@ class RegionFinder(ABC):
         совпадений в справочниках.
     """
 
-    _postcode_regex = re.compile(r'((?<![.:\d])\d{6}(?![:\d]))')
-    _postcode_first_3_regex = re.compile(r'(?<![.:\d])(\d{3})\d{3}(?![:\d])')
+    # https://regex101.com/r/uTsCxy/1
+    _postcode_regex = re.compile(
+        r'(?:^|\s|[А-Яа-яA-Za-z][.,;]|;)(\d{6})(?![:\d])')
+    _postcode_first_3_regex = re.compile(
+        r'(?:^|\s|[А-Яа-яA-Za-z][.,;]|;)(\d{3})\d{3}(?![:\d])')
 
     # https://regex101.com/r/jO3iI9/1
     _region_name_regex = re.compile(

@@ -43,9 +43,17 @@ class TestRegion:
         """Географические координаты
          не определяются как почтовый индекс."""
 
-        address = ('57.323161, 38.505162, Совхозная'
-                   ' улица, 10А, посёлок городского типа')
+        addresses = ['57.323161, 38.505162, Совхозная улица, 10А, посёлок '
+                     'городского типа',
+                     '57,323161, 38,505162, Совхозная улица, 10А, посёлок '
+                     'городского типа']
+        for address in addresses:
+            assert not RegionFinderForTests(address)._find_postcodes()
 
+    def test_find_postcodes_not_seq_7_symbs(self):
+        """Последовательность из 7 цифр не захватывается."""
+
+        address = '1252123, г. Москва'
         assert not RegionFinderForTests(address)._find_postcodes()
 
     def test_find_postcodes_five_symb_postcode(self):
@@ -56,6 +64,18 @@ class TestRegion:
                    ' Чувашская Республика, 42803')
 
         assert not RegionFinderForTests(address)._find_postcodes()
+
+    def test_find_postcodes_with_diff_symbs_sep(self):
+        """Корректно обрабатываются почтовые индексы через разные
+        разделители."""
+
+        address = '125212 г. Москва;420803 Чебоксары,542143 Нижний Тагил'
+
+        assert (RegionFinderForTests(address)
+                ._find_postcodes() == ['125212',
+                                       '420803',
+                                       '542143']
+                )
 
     def test_find_postcodes_first_3_symb(self):
         """Последовательность из шести цифр
